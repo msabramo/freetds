@@ -40,3 +40,6 @@ Makefile
 include/freetds/sysconfdir.h
 include/freetds/version.h
 test-driver
+*.log
+*.trs
+*.out
