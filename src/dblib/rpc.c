@@ -258,7 +258,17 @@ dbrpcparam(DBPROCESS * dbproc, const char paramname[], BYTE status, int type, DB
 
 	*pparam = param;	/* add to the end of the list */
 
-	tdsdump_log(TDS_DBG_INFO1, "dbrpcparam() added parameter \"%s\"\n", (paramname) ? paramname : "");
+	tdsdump_log(TDS_DBG_INFO1, "dbrpcparam() added parameter \"%s\": param->value = %p; param->type = %d; param->datalen = %d\n",
+		(paramname) ? paramname : "", param->value, param->type, param->datalen);
+	if (type == SYBDECIMAL) {
+		if (param->value) {
+			DBDECIMAL *dec = (DBDECIMAL *) param->value;
+			tdsdump_log(TDS_DBG_INFO1, "dbrpcparam(): param is SYBDECIMAL with dec->precision = %d, dec->scale = %d\n",
+				dec->precision, dec->scale);
+		} else {
+			tdsdump_log(TDS_DBG_INFO1, "dbrpcparam(): param is SYBDECIMAL with param->value == NULL! ***\n");
+		}
+	}
 
 	return SUCCEED;
 }
@@ -391,6 +401,10 @@ param_info_alloc(TDSSOCKET * tds, DBREMOTE_PROC * rpc)
 		temp_type = p->type;
 		temp_value = p->value;
 		temp_datalen = p->datalen;
+		if (p->type == SYBDECIMAL) {
+			tdsdump_log(TDS_DBG_INFO1, "parm_info_alloc(): p = %p; p->value = %p; p->name = \"%s\"; p->type = %d; p->value->precision = %d; p->value->scale = %d; p->datalen = %d\n",
+				p, p->value, p->name, p->type, ((DBDECIMAL *)(p->value))->precision, ((DBDECIMAL *)(p->value))->scale, p->datalen);
+		}
 
 		if (p->datalen == 0)
 			param_is_null = 1; 
@@ -405,6 +419,8 @@ param_info_alloc(TDSSOCKET * tds, DBREMOTE_PROC * rpc)
 			pcol->column_scale = dec->scale;
 			if (dec->precision > 0 && dec->precision <= MAXPRECISION)
 				temp_datalen = tds_numeric_bytes_per_prec[dec->precision] + 2;
+				tdsdump_log(TDS_DBG_INFO1, "parm_info_alloc(): Handling a SYBDECIMAL (\"%s\") with precision = %d (%d) and scale = %d (%d); temp_datalen = %d\n",
+					p->name, pcol->column_prec, dec->precision, pcol->column_scale, dec->scale, temp_datalen);
 		}
 		if (param_is_null || (p->status & DBRPCRETURN)) {
 			if (param_is_null) {
