@@ -402,6 +402,10 @@ param_info_alloc(TDSSOCKET * tds, DBREMOTE_PROC * rpc)
 		temp_value = p->value;
 		temp_datalen = p->datalen;
 		if (p->type == SYBDECIMAL) {
+      // if (!strcmp(p->name, "@odecimal")) {
+      //   ((DBDECIMAL *)(p->value))->precision = 18;
+      //   ((DBDECIMAL *)(p->value))->scale = 5;
+      // }
 			tdsdump_log(TDS_DBG_INFO1, "parm_info_alloc(): p = %p; p->value = %p; p->name = \"%s\"; p->type = %d; p->value->precision = %d; p->value->scale = %d; p->datalen = %d\n",
 				p, p->value, p->name, p->type, ((DBDECIMAL *)(p->value))->precision, ((DBDECIMAL *)(p->value))->scale, p->datalen);
 		}
