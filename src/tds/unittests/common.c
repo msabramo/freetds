@@ -9,6 +9,8 @@ char PASSWORD[512];
 char DATABASE[512];
 /* TODO use another default ?? */
 char CHARSET[512] = "ISO-8859-1";
+char PWD[512] = "../../../PWD";
+char PWD_ABSPATH[512];
 
 int read_login_info(void);
 
@@ -19,11 +21,37 @@ read_login_info(void)
 	char line[512];
 	char *s1, *s2;
 
+	s1 = getenv("TDSPWDUID");
+	if (s1 && s1[0]) {
+		strcpy(USER, s1);
+	}
+	s1 = getenv("TDSPWDSRV");
+	if (s1 && s1[0]) {
+		strcpy(SERVER, s1);
+	}
+	s1 = getenv("TDSPWDPWD");
+	if (s1 && s1[0]) {
+		strcpy(PASSWORD, s1);
+	}
+	s1 = getenv("TDSPWDDB");
+	if (s1 && s1[0]) {
+		strcpy(DATABASE, s1);
+	}
+	if (USER[0] && SERVER[0] && PASSWORD[0] && DATABASE[0]) {
+		return TDS_SUCCESS;
+	}
+
 	s1 = getenv("TDSPWDFILE");
-	if (s1 && s1[0])
-		in = fopen(s1, "r");
-	if (!in)
-		in = fopen("../../../PWD", "r");
+	if (s1 && s1[0]) {
+		realpath(s1, PWD_ABSPATH);
+		in = fopen(PWD_ABSPATH, "r");
+		fprintf(stderr, "opening PWD file at %s => %p\n", PWD_ABSPATH, in);
+	}
+	if (!in) {
+		realpath(PWD, PWD_ABSPATH);
+		in = fopen(PWD_ABSPATH, "r");
+		fprintf(stderr, "opening PWD file at %s => %p\n", PWD_ABSPATH, in);
+	}
 	if (!in) {
 		fprintf(stderr, "Can not open PWD file\n\n");
 		return TDS_FAIL;
