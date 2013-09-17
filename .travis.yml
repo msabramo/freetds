@@ -6,3 +6,12 @@ install:
 - make
 script:
 - make check
+env:
+  global:
+  - TDSPWDSRV=sqllibrarydev.cloudapp.net
+  - TDSPORT=1433
+  - TDSVER=7.2
+  - secure: Brt/BLX8yZNhfYn35/zEWUrWAOyg2wAnzg80Wj2ynibIqzbEivPjnb38yAqHFMsMP3E4SX0Bx3uu2IHIKJR5vqtbEFzdiwXUodwiVwnmNsYSqPQEhmTieUjnrsCQEkwJRID5YjwncxdBoO8EnV4TwhSWs3/jbxJJQW1uqYrl5ng=
+  - secure: TVI82Nqb6P5EzoOqzTjJslz4O/2e2dE0D9OMNMvUSjtye44LSmZ5zJqP4nUidQxixdSzBiUNx+fIDjQBstDhDLzrCEQN7JaQ+r8pwMbVMbu05URMTIhTcbfHj2iB61m7Q6dnN2OBRLgLSrJnkzR9A5XNwRWIGUqIzj+6uvUYrSM=
+  - secure: B5vdpxtL5hRF+ZWkEq5CES0C+iBnNNft+/6uMLLXwscb9xz111xFdOwbuvfVBvTyRzR+x1zx8u31+NROPyMqKaPcLHbVUh+rF6jwV9ftIYHXyoL+0oIvE3/RL0k8umqct+FfR2mPEOCo9W/BeAIdn4qMJA6O3uJjhTHt9FI/PUs=
+
