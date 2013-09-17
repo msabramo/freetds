@@ -9,8 +9,8 @@ char PASSWORD[512];
 char DATABASE[512];
 /* TODO use another default ?? */
 char CHARSET[512] = "ISO-8859-1";
-char PWD[512] = "../../../PWD";
-char PWD_ABSPATH[512];
+char PWD[PATH_MAX] = "../../../PWD";
+char PWD_ABSPATH[PATH_MAX];
 
 int read_login_info(void);
 
@@ -43,12 +43,10 @@ read_login_info(void)
 
 	s1 = getenv("TDSPWDFILE");
 	if (s1 && s1[0]) {
-		realpath(s1, PWD_ABSPATH);
-		in = fopen(PWD_ABSPATH, "r");
-		fprintf(stderr, "opening PWD file at %s => %p\n", PWD_ABSPATH, in);
+		strncpy(PWD, s1, PATH_MAX);
 	}
-	if (!in) {
-		realpath(PWD, PWD_ABSPATH);
+	fprintf(stderr, "looking for PWD file at %s\n", PWD);
+	if (realpath(PWD, PWD_ABSPATH)) {
 		in = fopen(PWD_ABSPATH, "r");
 		fprintf(stderr, "opening PWD file at %s => %p\n", PWD_ABSPATH, in);
 	}
