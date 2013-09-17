@@ -1,0 +1,8 @@
+language: C
+before_install:
+- autoreconf -i
+install:
+- ./configure
+- make
+script:
+- make check
