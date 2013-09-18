@@ -23,21 +23,26 @@ read_login_info(void)
 
 	s1 = getenv("TDSPWDUID");
 	if (s1 && s1[0]) {
+		fprintf(stderr, "Using USER from TDSPWDUID environment variable\n");
 		strcpy(USER, s1);
 	}
 	s1 = getenv("TDSPWDSRV");
 	if (s1 && s1[0]) {
+		fprintf(stderr, "Using SERVER from TDSPWDSRV environment variable\n");
 		strcpy(SERVER, s1);
 	}
 	s1 = getenv("TDSPWDPWD");
 	if (s1 && s1[0]) {
+		fprintf(stderr, "Using PASSWORD from TDSPWDPWD environment variable\n");
 		strcpy(PASSWORD, s1);
 	}
 	s1 = getenv("TDSPWDDB");
 	if (s1 && s1[0]) {
+		fprintf(stderr, "Using DATABASE from TDSPWDDB environment variable\n");
 		strcpy(DATABASE, s1);
 	}
 	if (USER[0] && SERVER[0] && PASSWORD[0] && DATABASE[0]) {
+		fprintf(stderr, "Got all config settings from environment variables. Will skip looking for PWD file...\n");
 		return TDS_SUCCESS;
 	}
 
