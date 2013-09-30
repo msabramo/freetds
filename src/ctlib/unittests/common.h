@@ -5,6 +5,10 @@
 static char rcsid_common_h[] = "$Id: common.h,v 1.11 2008-07-06 16:44:24 jklowden Exp $";
 static void *no_unused_common_h_warn[] = { rcsid_common_h, no_unused_common_h_warn };
 
+#if HAVE_LIMITS_H
+#include <limits.h>
+#endif /* HAVE_LIMITS_H */
+
 extern char SERVER[512];
 extern char DATABASE[512];
 extern char USER[512];

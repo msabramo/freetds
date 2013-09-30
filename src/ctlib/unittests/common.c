@@ -37,7 +37,8 @@ COMMON_PWD common_pwd = {0};
 static char *DIRNAME = NULL;
 static const char *BASENAME = NULL;
 
-static const char *PWD = "../../../PWD";
+char PWD[PATH_MAX] = "../../../PWD";
+static char PWD_ABSPATH[PATH_MAX];
 
 
 int cslibmsg_cb_invoked = 0;
@@ -83,11 +84,40 @@ read_login_info(void)
 		return CS_SUCCEED;
 	}
 
+	s1 = getenv("TDSPWDUID");
+	if (s1 && s1[0]) {
+		fprintf(stdout, "Using USER from TDSPWDUID environment variable\n");
+		strcpy(USER, s1);
+	}
+	s1 = getenv("TDSPWDSRV");
+	if (s1 && s1[0]) {
+		fprintf(stdout, "Using SERVER from TDSPWDSRV environment variable\n");
+		strcpy(SERVER, s1);
+	}
+	s1 = getenv("TDSPWDPWD");
+	if (s1 && s1[0]) {
+		fprintf(stdout, "Using PASSWORD from TDSPWDPWD environment variable\n");
+		strcpy(PASSWORD, s1);
+	}
+	s1 = getenv("TDSPWDDB");
+	if (s1 && s1[0]) {
+		fprintf(stdout, "Using DATABASE from TDSPWDDB environment variable\n");
+		strcpy(DATABASE, s1);
+	}
+	if (USER[0] && SERVER[0] && PASSWORD[0] && DATABASE[0]) {
+		fprintf(stdout, "Got all config settings from environment variables. Will skip looking for PWD file...\n");
+		return CS_SUCCEED;
+	}
+
 	s1 = getenv("TDSPWDFILE");
-	if (s1 && s1[0])
-		in = fopen(s1, "r");
-	if (!in)
-		in = fopen(PWD, "r");
+	if (s1 && s1[0]) {
+		strncpy(PWD, s1, PATH_MAX);
+	}
+	fprintf(stdout, "looking for PWD file at %s\n", PWD);
+	if (realpath(PWD, PWD_ABSPATH)) {
+		in = fopen(PWD_ABSPATH, "r");
+		fprintf(stdout, "opening PWD file at %s => %p\n", PWD_ABSPATH, in);
+	}
 	if (!in) {
 		fprintf(stderr, "Can not open PWD file \"%s\"\n\n", PWD);
 		return CS_FAIL;
@@ -143,7 +173,7 @@ establish_login(int argc, char **argv)
 			strcpy(options.DATABASE, optarg);
 			break;
 		case 'f': /* override default PWD file */
-			PWD = strdup(optarg);
+			strcpy(PWD, optarg);
 			break;
 		case 'm':
 			common_pwd.maxlength = strtol(optarg, NULL, 10);
