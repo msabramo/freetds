@@ -1022,6 +1022,10 @@ tds71_do_login(TDSSOCKET * tds, TDSLOGIN* login)
 	/* do prelogin */
 	tds->out_flag = TDS71_PRELOGIN;
 
+// 2013-10-17 marca - hacks to try and figure out why FreeTDS isn't using enryption...
+login->encryption_level = TDS_ENCRYPTION_REQUIRE;
+printf("*** %s:%d - login->encryption_level = %d\n", __FILE__, __LINE__, login->encryption_level);
+
 	tds_put_n(tds, buf, start_pos);
 	/* netlib version */
 	tds_put_n(tds, IS_TDS72_PLUS(tds->conn) ? netlib9 : netlib8, 6);
